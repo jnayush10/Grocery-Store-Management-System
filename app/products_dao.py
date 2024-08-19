@@ -1,39 +1,57 @@
 from sql_connection import connect_to_database
 
+list_of_products = []
 
-def execute_query(conn, query):
-    '''Executes an SQL query and returns the results.
+
+def get_products(conn):
+    '''gets the complete list of products available in grocery store.
     Args:
       conn: The psycopg2 connection object.
-      query: The SQL query to execute.
 
     Returns:
-      A list of tuples containing the query results.
+      None.
     '''
+    query = 'SELECT p.product_id, p.name, u.uom_id, u.uom_name, p.price_per_unit FROM gs.products as p inner join gs.uom as u on p.uom_id = u.uom_id ORDER BY product_id ASC'
 
     with conn.cursor() as cur:
         cur.execute(query)
-        results = cur.fetchall()
-        return results
+        products = cur.fetchall()
+
+    for (product_id, name, unit_of_measure_id, unit_of_measure, price_per_unit) in products:
+        list_of_products.append({
+            'product_id': product_id,
+            'product_name': name.strip(),
+            'uom_id': unit_of_measure_id,
+            'uom_name': unit_of_measure.strip(),
+            'price_per_unit': price_per_unit
+        })
+
+
+def insert_product(conn, product):
+    '''insert a new product to the inventory of grocery store
+    Args:
+      conn: The psycopg2 connection object.
+      product: A dictionary object with details of new product
+
+    Returns:
+      None
+    '''
+    if product is not None:
+        query = f"INSERT INTO gs.products (NAME, UOM_ID, PRICE_PER_UNIT) VALUES ('{
+            product['product_name']}', '{product['uom_id']}', '{product['price_per_unit']}')"
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()
 
 
 if __name__ == '__main__':
-
-    list_of_products = []
 
     conn = connect_to_database('postgres', 'postgres',
                                'postgres', 'localhost', '5432')
 
     if conn:
-        query = 'SELECT p.product_id, p.name, u.uom_id, u.uom_name, p.price_per_unit FROM gs.products as p inner join gs.uom as u on p.uom_id = u.uom_id ORDER BY product_id ASC'
-        products = execute_query(conn, query)
-        for (product_id, name, unit_of_measure_id, unit_of_measure, price_per_unit) in products:
-            list_of_products.append({
-                'product_id': product_id,
-                'product_name': name.strip(),
-                'uom_id': unit_of_measure_id,
-                'uom_name': unit_of_measure.strip(),
-                'price_per_unit': price_per_unit
-            })
-            print(list_of_products)
+        get_products(conn)
+        # print(insert_product(conn, {'product_name': 'potatoes',
+        # 'uom_id': '2', 'price_per_unit': '60'}))
+        print(list_of_products)
         conn.close()
