@@ -44,6 +44,22 @@ def insert_product(conn, product):
         conn.commit()
 
 
+def delete_product(conn, product_id):
+    '''delete a product from the inventory of grocery store
+    Args:
+      conn: The psycopg2 connection object.
+      product_id: The product id of the product to be deleted
+
+    Returns:
+      None
+    '''
+    if product_id is not None:
+        query = f"DELETE FROM gs.products WHERE product_id = {product_id}"
+        cursor = conn.cursor()
+        cursor.execute(query)
+        conn.commit()
+
+
 if __name__ == '__main__':
 
     conn = connect_to_database('postgres', 'postgres',
@@ -51,7 +67,7 @@ if __name__ == '__main__':
 
     if conn:
         get_products(conn)
-        # print(insert_product(conn, {'product_name': 'potatoes',
-        # 'uom_id': '2', 'price_per_unit': '60'}))
-        print(list_of_products)
+        insert_product(conn, {'product_name': 'potatoes',
+                              'uom_id': '2', 'price_per_unit': '60'})
+        delete_product(conn, 11)
         conn.close()
