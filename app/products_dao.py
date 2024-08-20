@@ -9,7 +9,7 @@ def get_products(conn):
       conn: The psycopg2 connection object.
 
     Returns:
-      None.
+      list of products available in the grocery
     '''
     query = 'SELECT p.product_id, p.name, u.uom_id, u.uom_name, p.price_per_unit FROM gs.products as p inner join gs.uom as u on p.uom_id = u.uom_id ORDER BY product_id ASC'
 
@@ -25,6 +25,8 @@ def get_products(conn):
             'uom_name': unit_of_measure.strip(),
             'price_per_unit': price_per_unit
         })
+
+    return list_of_products
 
 
 def insert_product(conn, product):
