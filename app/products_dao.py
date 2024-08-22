@@ -1,7 +1,5 @@
 from sql_connection import connect_to_database
 
-list_of_products = []
-
 
 def get_products(conn):
     '''gets the complete list of products available in grocery store.
@@ -11,6 +9,8 @@ def get_products(conn):
     Returns:
       list of products available in the grocery
     '''
+    list_of_products = []
+
     query = 'SELECT p.product_id, p.name, u.uom_id, u.uom_name, p.price_per_unit FROM gs.products as p inner join gs.uom as u on p.uom_id = u.uom_id ORDER BY product_id ASC'
 
     with conn.cursor() as cur:

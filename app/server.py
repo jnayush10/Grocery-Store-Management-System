@@ -17,5 +17,14 @@ def get_all_products():
     return response
 
 
+@app.route('/deleteProduct', methods=['POST'])
+def del_product():
+    return_id = delete_product(
+        conn=connection, product_id=request.form['product_id'])
+    response = jsonify({'product_id': return_id})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 if __name__ == '__main__':
     app.run(port=5000)
