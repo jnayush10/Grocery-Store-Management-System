@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from sql_connection import connect_to_database
 from products_dao import *
+from uom_dao import *
 
 app = Flask(__name__)
 
@@ -22,6 +23,14 @@ def del_product():
     return_id = delete_product(
         conn=connection, product_id=request.form['product_id'])
     response = jsonify({'product_id': return_id})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
+@app.route('/getUOM', methods=['GET'])
+def get_all_uoms():
+    uoms = get_uoms(conn=connection)
+    response = jsonify(uoms)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
