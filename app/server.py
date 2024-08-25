@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from sql_connection import connect_to_database
 from products_dao import *
 from uom_dao import *
+import json
 
 app = Flask(__name__)
 
@@ -22,6 +23,15 @@ def get_all_products():
 def del_product():
     return_id = delete_product(
         conn=connection, product_id=request.form['product_id'])
+    response = jsonify({'product_id': return_id})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
+@app.route('/insertProduct', methods=['POST'])
+def add_product():
+    request_payload = json.loads(request.form['data'])
+    return_id = insert_product(conn=connection, product=request_payload)
     response = jsonify({'product_id': return_id})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

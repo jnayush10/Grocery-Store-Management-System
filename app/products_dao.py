@@ -36,14 +36,16 @@ def insert_product(conn, product):
       product: A dictionary object with details of new product
 
     Returns:
-      None
+      product_id
     '''
+    product_id = None
     if product is not None:
         query = f"INSERT INTO gs.products (NAME, UOM_ID, PRICE_PER_UNIT) VALUES ('{
-            product['product_name']}', '{product['uom_id']}', '{product['price_per_unit']}')"
+            product['product_name']}', '{product['uom_id']}', '{product['price_per_unit']}') RETURNING product_id"
         cursor = conn.cursor()
-        cursor.execute(query)
+        product_id = cursor.execute(query)
         conn.commit()
+    return product_id
 
 
 def delete_product(conn, product_id):
