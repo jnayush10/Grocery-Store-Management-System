@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from sql_connection import connect_to_database
 from products_dao import *
+from orders_dao import *
 from uom_dao import *
 import json
 
@@ -33,6 +34,15 @@ def add_product():
     request_payload = json.loads(request.form['data'])
     return_id = insert_product(conn=connection, product=request_payload)
     response = jsonify({'product_id': return_id})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
+@app.route('/insertOrder', methods=['POST'])
+def create_order():
+    request_payload = json.loads(request.form['data'])
+    return_id = insert_order(conn=connection, order=request_payload)
+    response = jsonify({'order_id': return_id})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
