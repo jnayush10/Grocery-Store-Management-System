@@ -6,12 +6,17 @@ def insert_order(conn, order):
     order_id = None
     if order is not None:
         cursor = conn.cursor()
+
         order_query = f"INSERT INTO gs.orders (CUSTOMER_NAME, TOTAL, DATETIME) VALUES ('{
             order['customer_name']}', '{order['grand_total']}', '{order['datetime']}') RETURNING order_id"
-        order_id = cursor.execute(order_query)
-        order_details_query = f"INSERT INTO gs.order_details (ORDER_ID, PRODUCT_ID, QUANTITY, TOTAL_PRICE) VALUES ('{
-            order_id}', '{order['order_details']['product_id']}', '{order['order_details']['quantity']}', '{order['order_details']['total_price']}')"
-        cursor.executemany(order_details_query)
+        cursor.execute(order_query)
+        conn.commit()
+        order_id = cursor.fetchone()
+
+        for order_detail in order['order_details']:
+            order_details_query = f"INSERT INTO gs.order_details (ORDER_ID, PRODUCT_ID, QUANTITY, TOTAL_PRICE) VALUES ('{
+                order_id[0]}', '{order_detail['product_id']}', '{order_detail['quantity']}', '{order_detail['total_price']}')"
+            cursor.execute(order_details_query)
         conn.commit()
     return order_id
 

@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     if conn:
         get_products(conn)
-        insert_product(conn, {'product_name': 'potatoes',
-                              'uom_id': '2', 'price_per_unit': '60'})
+        insert_product(conn, {'product_name': 'Cucumber',
+                              'uom_id': '2', 'price_per_unit': '87'})
         delete_product(conn, 11)
         conn.close()
