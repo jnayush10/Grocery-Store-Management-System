@@ -15,7 +15,7 @@ def insert_order(conn, order):
 
         for order_detail in order['order_details']:
             order_details_query = f"INSERT INTO gs.order_details (ORDER_ID, PRODUCT_ID, QUANTITY, TOTAL_PRICE) VALUES ('{
-                order_id[0]}', '{order_detail['product_id']}', '{order_detail['quantity']}', '{order_detail['total_price']}')"
+                order_id[0]}', '{int(order_detail['product_id'])}', '{float(order_detail['quantity'])}', '{float(order_detail['total_price'])}')"
             cursor.execute(order_details_query)
         conn.commit()
     return order_id

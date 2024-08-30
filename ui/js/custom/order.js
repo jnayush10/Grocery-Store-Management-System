@@ -11,7 +11,7 @@ $(function () {
           '<option value="' +
           product.product_id +
           '">' +
-          product.name +
+          product.product_name +
           "</option>";
         productPrices[product.product_id] = product.price_per_unit;
       });
