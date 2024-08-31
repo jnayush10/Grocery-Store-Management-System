@@ -8,7 +8,7 @@ def insert_order(conn, order):
         cursor = conn.cursor()
 
         order_query = f"INSERT INTO gs.orders (CUSTOMER_NAME, TOTAL, DATETIME) VALUES ('{
-            order['customer_name']}', '{order['grand_total']}', '{order['datetime']}') RETURNING order_id"
+            order['customer_name']}', '{order['grand_total']}', '{datetime.now()}') RETURNING order_id"
         cursor.execute(order_query)
         conn.commit()
         order_id = cursor.fetchone()
@@ -21,24 +21,41 @@ def insert_order(conn, order):
     return order_id
 
 
+def get_all_orders(conn):
+    cursor = conn.cursor()
+    query = f"SELECT * FROM gs.orders"
+    cursor.execute(query)
+
+    response = []
+    for row in cursor:
+        response.append({
+            'order_id': row[0],
+            'customer_name': row[1].strip(),
+            'total': row[2],
+            'datetime': row[3]
+        })
+    return response
+
+
 if __name__ == '__main__':
     connection = connect_to_database('postgres', 'postgres',
                                      'postgres', 'localhost', '5432')
     if connection:
-        insert_order(conn=connection, order={
-                     'customer_name': 'dheeraj',
-                     'grand_total': 310,
-                     'datetime': datetime.now(),
-                     'order_details': [
-                         {
-                             'product_id': 1,
-                             'quantity': 2,
-                             'total_price': 60
-                         },
-                         {
-                             'product_id': 3,
-                             'quantity': 1,
-                             'total_price': 250
-                         },
-                     ]})
+        # insert_order(conn=connection, order={
+        #              'customer_name': 'dheeraj',
+        #              'grand_total': 310,
+        #              'datetime': datetime.now(),
+        #              'order_details': [
+        #                  {
+        #                      'product_id': 1,
+        #                      'quantity': 2,
+        #                      'total_price': 60
+        #                  },
+        #                  {
+        #                      'product_id': 3,
+        #                      'quantity': 1,
+        #                      'total_price': 250
+        #                  },
+        #              ]})
+        print(get_all_orders(conn=connection))
         connection.close()
