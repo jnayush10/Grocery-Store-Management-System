@@ -47,6 +47,14 @@ def create_order():
     return response
 
 
+@app.route('/getAllOrders', methods=['GET'])
+def get_orders():
+    orders = get_all_orders(conn=connection)
+    response = jsonify(orders)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 @app.route('/getUOM', methods=['GET'])
 def get_all_uoms():
     uoms = get_uoms(conn=connection)
